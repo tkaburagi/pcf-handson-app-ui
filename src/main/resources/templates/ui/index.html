@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http:///www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet"
+          href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css" />
+</head>
+<body>
+<table class="pure-table pure-table-striped table logo">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Price</th>
+    </tr>
+    </thead>
+    <th:block th:each="allbooks : ${allbooks}">
+        <tr>
+            <td width="30%" th:text="${allbooks.title}" />
+            <td width="30%" th:text="${allbooks.author_name}" />
+            <td width="30%" th:text="${allbooks.price}" />
+        </tr>
+    </th:block>
+</table>
+
+<form class="pure-form" th:action="@{/}">
+    <input type="text" class="pure-input-rounded" name="id" />
+    <button type="submit">Search</button>
+</form>
+<table class="pure-table pure-table-striped table logo">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Price</th>
+        <th>Data Source</th>
+    </tr>
+    </thead>
+    <th:block th:each="searchedBook : ${searchedBook}">
+        <tr>
+            <td width="30%" th:text="${searchedBook.title}" />
+            <td width="30%" th:text="${searchedBook.author_name}" />
+            <td width="30%" th:text="${searchedBook.price}" />
+            <td width="30%" th:text="${searchedBook.ds}" />
+        </tr>
+    </th:block>
+</table>
+
+    <p th:text="${message}"> </p>
+    <p th:text="${session.iam}"> </p>
+
+</body>
+</html>
