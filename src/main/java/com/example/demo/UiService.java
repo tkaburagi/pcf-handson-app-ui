@@ -2,9 +2,12 @@ package com.example.demo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,42 +15,43 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class UiService {
 
-    @Value( "${api.url.allbooks}" )
-    private String apiUrl1;
+    @Autowired
+    private RestTemplate restTemplate;
 
-    @Value( "${api.url.book}" )
-    private String apiUrl2;
+    private final ObjectMapper objectMapper;
 
-    @Value( "${api.url.dummy}" )
-    private String dummyUrl;
-
-    ObjectMapper mapper = new ObjectMapper();
-
-    RestTemplate restTemplate = new RestTemplate();
-
-    public Model getAllBooks(Model model) throws Exception {
-        String result = restTemplate.getForObject(apiUrl1, String.class);
-        Book[] bList = mapper.readValue(result, Book[].class);
-        model.addAttribute("allbooks", bList);
-        return  model;
+    public UiService(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
-    public Model getBookById(@RequestParam("id") String id, Model model) throws Exception {
-        String targetUrl = UriComponentsBuilder.fromUriString(apiUrl2).queryParam("id", id).build().toString();
-        String result = restTemplate.getForObject(targetUrl, String.class);
-        System.out.println("targetUrl: " + targetUrl);
-        Book b = mapper.readValue(result, Book.class);
-        model.addAttribute("searchedBook", b);
-        return  model;
+    @Value( "${api.url}" )
+    private String apiUrl;
+
+    public AppInfo getAppInfo() throws Exception {
+        String result = this.restTemplate.getForObject(apiUrl, String.class);
+        AppInfo a = this.objectMapper.readValue(result, AppInfo.class);
+        return  a;
+    }
+
+    public Book[] getAllBooks() throws Exception {
+        String result = this.restTemplate.getForObject(apiUrl + "/allbooks", String.class);
+        Book[] bList = this.objectMapper.readValue(result, Book[].class);
+        return  bList;
+    }
+
+    public Book getBookById(@RequestParam("id") String id) throws Exception {
+        String targetUrl = UriComponentsBuilder.fromUriString(apiUrl + "/book").queryParam("id", id).build().toString();
+        String result = this.restTemplate.getForObject(targetUrl, String.class);
+        Book b = this.objectMapper.readValue(result, Book.class);
+        return b;
     }
 
     @HystrixCommand(fallbackMethod = "executeFallback")
-    public Model dummy(Model model) {
-        restTemplate.getForObject(dummyUrl, String.class);
-        return model;
+    public String dummy() {
+        return this.restTemplate.getForObject(apiUrl + "/dummy", String.class);
     }
 
-    public Model executeFallback(Model model, Throwable e) {
-        return model.addAttribute("message", "No available");
+    public String executeFallback(Throwable e) {
+        return "Not available";
     }
 }

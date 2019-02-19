@@ -7,6 +7,26 @@
           href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css" />
 </head>
 <body>
+
+<table class="pure-table pure-table-striped table logo">
+    <thead>
+    <tr>
+        <th>Message</th>
+        <th>Index</th>
+        <th>Host</th>
+        <th>Java Version</th>
+    </tr>
+    </thead>
+    <th:block th:each="appinfo : ${appinfo}">
+        <tr>
+            <td width="30%" th:text="${appinfo.message}" />
+            <td width="30%" th:text="${appinfo.index}" />
+            <td width="30%" th:text="${appinfo.host}" />
+            <td width="30%" th:text="${appinfo.java}" />
+        </tr>
+    </th:block>
+</table>
+
 <table class="pure-table pure-table-striped table logo">
     <thead>
     <tr>

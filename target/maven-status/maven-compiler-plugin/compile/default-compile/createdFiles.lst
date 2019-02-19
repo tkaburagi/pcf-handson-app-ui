@@ -1,5 +1,7 @@
 com/example/demo/Book.class
 com/example/demo/PccConfig.class
+com/example/demo/ClientConfig.class
 com/example/demo/UiController.class
+com/example/demo/AppInfo.class
 com/example/demo/DemoUiApplication.class
 com/example/demo/UiService.class

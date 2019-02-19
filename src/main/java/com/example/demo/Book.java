@@ -1,10 +1,7 @@
 package com.example.demo;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.io.Serializable;
 
-@JsonSerialize
 public class Book implements Serializable {
     private String id;
     private String title;
